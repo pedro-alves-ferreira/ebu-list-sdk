@@ -1,0 +1,22 @@
+{
+  "name": "ebu-list-sdk-demos-login",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "start:dev": "nodemon"
+  },
+  "keywords": [],
+  "author": "Bisect Lda. <info@bisect.pt> (www.bisect.pt)",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^14.11.8",
+    "nodemon": "^2.0.4",
+    "ts-node": "^9.0.0"
+  },
+  "dependencies": {
+    "ebu-list-sdk": "file:../../lib",
+    "lodash": "^4.17.20"
+  }
+}
