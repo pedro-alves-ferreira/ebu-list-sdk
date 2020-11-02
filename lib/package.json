@@ -8,7 +8,9 @@
     "**/*"
   ],
   "scripts": {
-    "build": "rm -rf ./dist && tsc",
+    "build": "npm run clean && npm run compile",
+    "clean": "rm -rf ./dist",
+    "compile": "tsc",
     "lint": "tslint --config tslint.json --project .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

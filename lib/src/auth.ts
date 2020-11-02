@@ -18,7 +18,3 @@ export const login = async (baseUrl: string, username: string, password: string)
     const token = _.get(response, 'content.token');
     return token;
 }
-
-module.exports = {
-    login
-};

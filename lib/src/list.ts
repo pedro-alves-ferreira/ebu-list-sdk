@@ -17,13 +17,13 @@ class LIST {
         logger.info('Shutting down');
     }
 
-    // async getPcapInfo(pcapId) {
-    //     return this.get(`/pcap/${pcapId}`);
-    // }
+    public async getPcapInfo(pcapId: string) {
+        return this.get(`/pcap/${pcapId}`);
+    }
 
-    // async getPcapStreams(pcapId) {
-    //     return this.get(`/pcap/${pcapId}/streams/`);
-    // }
+    public async getPcapStreams(pcapId: string) {
+        return this.get(`/pcap/${pcapId}/streams/`);
+    }
 
     // PRIVATE
     private async get(endpoint: string) {
