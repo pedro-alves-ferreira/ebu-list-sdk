@@ -1,8 +1,14 @@
-import { login } from './auth';
+import { login, logout } from './auth';
 import { get } from './common';
 import { logger } from './logger';
 
 //////////////////////////////////////////////////////////////////////////////
+
+declare interface Version {
+    major: number,
+    minor: number,
+    patch: number
+};
 
 class LIST {
     private baseUrl: string;
@@ -15,6 +21,7 @@ class LIST {
 
     public shutdown() {
         logger.info('Shutting down');
+        return logout(this.baseUrl, this.token);
     }
 
     public async getPcapInfo(pcapId: string) {
@@ -23,6 +30,11 @@ class LIST {
 
     public async getPcapStreams(pcapId: string) {
         return this.get(`/pcap/${pcapId}/streams/`);
+    }
+
+    public async getVersion() {
+        const version : Version = await this.get('/meta/version') as Version;
+        console.log(`LIST version: ${version.major}.${version.minor}.${version.patch}`)
     }
 
     // PRIVATE

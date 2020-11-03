@@ -18,3 +18,8 @@ export const login = async (baseUrl: string, username: string, password: string)
     const token = _.get(response, 'content.token');
     return token;
 }
+
+export const logout = async (baseUrl: string, token: string): Promise<any> => {
+    const response = await post(baseUrl, token, '/auth/logout', {});
+    return validateResponseCode(response);
+}

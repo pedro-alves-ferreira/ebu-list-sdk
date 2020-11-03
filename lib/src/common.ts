@@ -81,11 +81,12 @@ export async function get(baseUrl: string, authToken: string, endpoint: string) 
 }
 
 declare interface IResponseBase {
-    result: number
+    result: number,
+    success: boolean,
 };
 
 function isResponse(object: any): object is IResponseBase {
-    return 'result' in object;
+    return (('result' in object) || ('success' in object));
 }
 
 export const validateResponseCode = (res: any) => {
@@ -97,5 +98,7 @@ export const validateResponseCode = (res: any) => {
 
     const r: IResponseBase = res as IResponseBase;
 
-    if (r.result !== 0) { throw new Error(`Failed: ${JSON.stringify(res)}`); }
+    if ((r.result !== 0) && r.success !== true) {
+        throw new Error(`Failed: ${JSON.stringify(res)}`);
+    }
 };
