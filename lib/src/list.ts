@@ -1,6 +1,7 @@
 import { login, logout } from './auth';
-import { get } from './common';
+import { get, post } from './common';
 import { logger } from './logger';
+import { Workflow } from './constants';
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -24,6 +25,14 @@ class LIST {
         return logout(this.baseUrl, this.token);
     }
 
+    public async getAllLiveSources() {
+        return this.get('/live/sources');
+    }
+
+    public async getAllPcaps() {
+        return this.get(`/pcap`);
+    }
+
     public async getPcapInfo(pcapId: string) {
         return this.get(`/pcap/${pcapId}`);
     }
@@ -37,10 +46,31 @@ class LIST {
         console.log(`LIST version: ${version.major}.${version.minor}.${version.patch}`)
     }
 
+    public async liveCapture(filename: string, duration: number, sources: string[]) {
+        const workflow = {
+            type: Workflow.liveCapture,
+            configuration: {
+                durationMs: duration * 1000,
+                    filename: filename,
+                    ids: sources
+            }
+        }
+        this.sendWorkflow(workflow);
+    }
+
     // PRIVATE
     private async get(endpoint: string) {
         return get(`${this.baseUrl}/api`, this.token, endpoint);
     }
+
+    private async post(endpoint: string, data: object) {
+        return post(`${this.baseUrl}/api`, this.token, endpoint, data);
+    }
+
+    private async sendWorkflow(workflow: object) {
+        return this.post(`/workflow/`, workflow);
+    }
+
 }
 
 // returns a new LIST object

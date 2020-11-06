@@ -25,10 +25,14 @@ const handleHttpResponse = (res: http.IncomingMessage, resolve: resolver, reject
     const decoder: StringDecoder = new StringDecoder('utf8');
     res.on('data', (data: Buffer) => body += decoder.write(data));
     res.on('end', () => {
-        try {
-            resolve(JSON.parse(body));
-        } catch (err) {
-            reject(err);
+        if (body === '') {
+            resolve({});
+        } else {
+            try {
+                resolve(JSON.parse(body));
+            } catch (err) {
+                reject(err);
+            }
         }
     });
     res.on('error', reject);

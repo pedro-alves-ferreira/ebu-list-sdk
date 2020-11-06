@@ -1,0 +1,22 @@
+{
+  "name": "ebu-list-sdk-demos-live-capture",
+  "version": "0.0.1",
+  "description": "Capture, ingest and show analysis.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "start:dev": "nodemon"
+  },
+  "keywords": [],
+  "author": "CBC/Radio-Canada. <patrick.keroulas@radio-canada.ca>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^14.11.8",
+    "nodemon": "^2.0.4",
+    "ts-node": "^9.0.0"
+  },
+  "dependencies": {
+    "ebu-list-sdk": "file:../../lib",
+    "lodash": "^4.17.20"
+  }
+}
