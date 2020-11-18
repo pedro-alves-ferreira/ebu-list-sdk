@@ -1,0 +1,55 @@
+{
+  "name": "ebu-list-sdk-base",
+  "version": "0.0.0",
+  "description": "",
+  "author": "Bisect Lda. <info@bisect.pt> (www.bisect.pt)",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
+  },
+  "devDependencies": {
+    "eslint": "^6.5.1",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-config-prettier": "^6.4.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-prettier": "^3.1.1",
+    "jest": "^24.9.0",
+    "lerna": "^3.22.1",
+    "prettier": "^1.18.2",
+    "ts-jest": "^24.1.0",
+    "@types/jest": "24.0.19",
+    "@types/node": "12.11.1",
+    "typescript": "3.6.4"
+  },
+  "dependencies": {},
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    }
+  },
+  "eslintConfig": {
+    "extends": [
+      "airbnb",
+      "plugin:react/recommended",
+      "plugin:@typescript-eslint/recommended",
+      "prettier/@typescript-eslint",
+      "plugin:prettier/recommended"
+    ],
+    "rules": {
+      "@typescript-eslint/no-explicit-any": [
+        "error"
+      ],
+      "@typescript-eslint/explicit-function-return-type": [
+        "error"
+      ]
+    }
+  },
+  "prettier": {
+    "trailingComma": "es5",
+    "tabWidth": 4,
+    "semi": true,
+    "singleQuote": true,
+    "printWidth": 120
+  }
+}

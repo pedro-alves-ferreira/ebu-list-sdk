@@ -1,1 +1,2 @@
-export { connectToList } from './list';
+export * as api  from './api';
+export { LIST } from './list';

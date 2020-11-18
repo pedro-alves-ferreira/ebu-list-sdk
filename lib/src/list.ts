@@ -1,82 +1,50 @@
-import { login, logout } from './auth';
-import { get, post } from './common';
-import { logger } from './logger';
-import { Workflow } from './constants';
+import * as apiTypes from './api/types';
+import { login } from './auth';
+import { Info } from './info';
+import { Live } from './live';
+import { Pcap } from './pcap';
+import { Transport } from './transport';
+import { RestClient } from './transport/restClient';
+import { WSCLient } from './transport/wsClient';
+import * as types from './types';
 
 //////////////////////////////////////////////////////////////////////////////
 
-declare interface Version {
-    major: number,
-    minor: number,
-    patch: number
-};
+export class LIST {
+    // returns a new LIST object
+    public static async connectWithOptions(options: types.IListOptions): Promise<LIST> {
+        const token = await login(options);
 
-class LIST {
-    private baseUrl: string;
-    private token: string;
+        const rest = new RestClient(options.baseUrl, token);
+        const user: apiTypes.IUserInfo = await rest.get('/api/user') as apiTypes.IUserInfo;
+        const ws = new WSCLient(options.baseUrl, '/socket', user.id);
+        const transport = new Transport(rest, ws);
 
-    constructor(baseUrl: string, token: string) {
-        this.baseUrl = baseUrl;
-        this.token = token;
+        return new LIST(transport);
     }
 
-    public shutdown() {
-        logger.info('Shutting down');
-        return logout(this.baseUrl, this.token);
+    public static async connect(baseUrl: string, username: string, password: string): Promise<LIST> {
+        return LIST.connectWithOptions({ baseUrl, username, password });
     }
 
-    public async getAllLiveSources() {
-        return this.get('/live/sources');
+    private constructor(public readonly transport: Transport) {
+        this.transport = transport;
     }
 
-    public async getAllPcaps() {
-        return this.get(`/pcap`);
+    public async close(): Promise<void> {
+        await this.transport.post('/auth/logout', {});
+        this.transport.close();
     }
 
-    public async getPcapInfo(pcapId: string) {
-        return this.get(`/pcap/${pcapId}`);
+    public get info() {
+        return new Info(this.transport);
     }
 
-    public async getPcapStreams(pcapId: string) {
-        return this.get(`/pcap/${pcapId}/streams/`);
+    public get live() {
+        return new Live(this.transport);
     }
 
-    public async getVersion() {
-        const version : Version = await this.get('/meta/version') as Version;
-        console.log(`LIST version: ${version.major}.${version.minor}.${version.patch}`)
+    public get pcap() {
+        return new Pcap(this.transport);
     }
-
-    public async liveCapture(filename: string, duration: number, sources: string[]) {
-        const workflow = {
-            type: Workflow.liveCapture,
-            configuration: {
-                durationMs: duration * 1000,
-                    filename: filename,
-                    ids: sources
-            }
-        }
-        this.sendWorkflow(workflow);
-    }
-
-    // PRIVATE
-    private async get(endpoint: string) {
-        return get(`${this.baseUrl}/api`, this.token, endpoint);
-    }
-
-    private async post(endpoint: string, data: object) {
-        return post(`${this.baseUrl}/api`, this.token, endpoint, data);
-    }
-
-    private async sendWorkflow(workflow: object) {
-        return this.post(`/workflow/`, workflow);
-    }
-
-}
-
-// returns a new LIST object
-export async function connectToList(baseUrl: string, userName: string, password: string): Promise<LIST> {
-    const token = await login(baseUrl, userName, password);
-    logger.info(`Logged into ${baseUrl}`);
-
-    return new LIST(baseUrl, token);
 }

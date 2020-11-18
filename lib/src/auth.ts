@@ -1,25 +1,21 @@
-import _ from 'lodash';
-import { post, validateResponseCode } from './common';
+import { post, validateResponseCode } from './transport/common';
+import * as types from './types';
 
 //////////////////////////////////////////////////////////////////////////////
 
-export const login = async (baseUrl: string, username: string, password: string): Promise<string> => {
+export const login = async (options: types.IListOptions): Promise<string> => {
     const data: object = {
-        password,
-        username,
+        password: options.password,
+        username: options.username,
     };
 
-    const response = await post(baseUrl, null, '/auth/login', data);
+    const response = await post(options.baseUrl, null, '/auth/login', data);
     validateResponseCode(response);
 
-    const success = _.get(response, 'content.success');
-    if (success !== true) { throw new Error(`Failed to login: ${JSON.stringify(response)}`); }
+    const success = response?.content?.success;
+    if (success !== true) {
+        throw new Error(`Failed to login: ${JSON.stringify(response)}`);
+    }
 
-    const token = _.get(response, 'content.token');
-    return token;
-}
-
-export const logout = async (baseUrl: string, token: string): Promise<any> => {
-    const response = await post(baseUrl, token, '/auth/logout', {});
-    return validateResponseCode(response);
-}
+    return response?.content?.token;
+};

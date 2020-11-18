@@ -1,5 +1,5 @@
 {
-  "name": "@bisect/ebu-list-sdk-demos-login",
+  "name": "@bisect/ebu-list-sdk-demos-pcap-upload",
   "version": "0.0.1",
   "description": "",
   "main": "dist/index.js",

@@ -2,15 +2,23 @@ This is an SDK to help develop applications that interact with EBU LIST.
 
 # Usage
 
-- Build the library:
+ebu-list-sdk uses [lerna](https://github.com/lerna/lerna) to manage multiple npm packages in the same repository.
+
+- Bootstrap:
 
 ```
-> cd lib && npm i && npm run build && cd -
+> npm i
+> npx lerna bootstrap
 ```
 
-- Run the login demo:
+- Build:
+```
+> npx lerna run build
+```
+
+- Run the demos:
 
 ```
-> cd demos/login
+> cd demos/<demo>
 > npm start
 ```

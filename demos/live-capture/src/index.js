@@ -9,7 +9,7 @@
  *
  */
 
-const { connectToList } = require('ebu-list-sdk');
+const { LIST } = require('@bisect/ebu-list-sdk');
 const readline = require('readline')
 
 const rl = readline.createInterface({
@@ -33,11 +33,11 @@ const sleep = (ms) => {
 }
 
 const run = async () => {
-    const list = await connectToList('http://localhost', 'user', 'pass');
+    const list = await LIST.connect('http://localhost', 'user', 'pass');
 
     console.log("---------------------------------");
     console.log("Get live source");
-    const sources = await list.getAllLiveSources();
+    const sources = await list.live.getAllSources();
     sources.forEach(function(e, i) {
         console.log(`${i}: ${e.meta.label}: ${JSON.stringify(e.sdp.streams)}`);
     });
@@ -54,12 +54,12 @@ const run = async () => {
     console.log("---------------------------------");
     const datetime = new Date();
     const filename = `auto-${datetime.toISOString()}-${source.meta.label}`;
-    await list.liveCapture(filename, duration, [ source.id ]);
+    await list.live.startCapture(filename, duration * 1000, [ source.id ]);
 
     var res = [];
     while (res.length == 0) {
         console.log(".");
-        const analysis = await list.getAllPcaps();
+        const analysis = await list.pcap.getAll();
         res = analysis.filter(a => a.file_name == filename);
         await sleep(2000);
     }
@@ -69,9 +69,9 @@ const run = async () => {
 
     console.log("---------------------------------");
     console.log("streams:");
-    console.log(await list.getPcapStreams(res[0].id));
+    console.log(await list.pcap.getStreams(res[0].id));
 
-    await list.shutdown();
+    await list.close();
 };
 
 run()
