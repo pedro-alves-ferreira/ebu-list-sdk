@@ -1,4 +1,4 @@
-import * as apiTypes from './api/types';
+import * as apiTypes from './api';
 import { login } from './auth';
 import { Info } from './info';
 import { Live } from './live';
@@ -16,7 +16,7 @@ export class LIST {
         const token = await login(options);
 
         const rest = new RestClient(options.baseUrl, token);
-        const user: apiTypes.IUserInfo = await rest.get('/api/user') as apiTypes.IUserInfo;
+        const user: apiTypes.user.IUserInfo = await rest.get('/api/user') as apiTypes.user.IUserInfo;
         const ws = new WSCLient(options.baseUrl, '/socket', user.id);
         const transport = new Transport(rest, ws);
 
