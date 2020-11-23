@@ -1,4 +1,19 @@
+import { mq } from '@bisect/core-be';
 import * as pcap from './pcap'
+
+export const preprocessorRequestQueue: mq.IQueueInfo = {
+    name: 'ebu-list.preprocessor.request',
+    options: {
+        durable: true,
+    },
+};
+
+export const preprocessorStatusExchange: mq.IExchangeInfo = {
+    name: 'ebu-list.preprocessor.status',
+    type: 'fanout',
+    options: { durable: false },
+    keys: ['announce'],
+};
 
 export enum Actions {
     request = 'preprocessing.request',
