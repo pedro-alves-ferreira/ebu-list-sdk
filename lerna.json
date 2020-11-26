@@ -1,7 +1,7 @@
 {
   "packages": [
     "lib",
-    "demos/**"
+    "demos"
   ],
   "version": "0.0.0"
 }
