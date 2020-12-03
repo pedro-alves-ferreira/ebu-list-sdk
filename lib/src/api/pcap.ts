@@ -46,7 +46,7 @@ export interface IST2110AudioInfo {}
 export interface IST2110AncInfo {}
 
 export type MediaSpecificInfo = IST2110VideoInfo | IST2110AudioInfo | IST2110AncInfo;
-export type MediaType = 'video' | 'audio' | 'anc' | 'unknown';
+export type MediaType = 'video' | 'audio' | 'ancillary_data' | 'unknown';
 
 // The reasons why the heuristics deemed the other possible formats as invalid
 export interface IMediaTypeValidation {
@@ -90,27 +90,27 @@ export interface INetworkInformation {
   valid_multicast_mac_address: boolean; // True of the MAC address is a valid multicast address
 }
 
-export type StreamState = 'ready'; // TODO check this
+export type StreamState = 'ready' | 'analyzed'; // TODO check this
 
 export interface IStreamStatistics {
   dropped_packet_count: number; // Number of dropped RTP packets
   dropped_packet_samples: any[]; // TODO check this
-  first_frame_ts: number; // RTP timestamp of the first packet
+  first_frame_ts?: number; // RTP timestamp of the first frame - Video TODO move this to media specific
   first_packet_ts: string; // The abosulte timestamp of the first packet
   frame_count?: number; // Number of video frames. TODO move this to media specific
-  is_interlaced: boolean; // Video TODO move this to media specific
-  last_frame_ts: number; // RTP timestamp of the last packet
+  is_interlaced?: boolean; // Video TODO move this to media specific
+  last_frame_ts?: number; // RTP timestamp of the last frame - Video TODO move this to media specific
   last_packet_ts: string; // The abosulte timestamp of the last packet
-  max_line_number: number; // Video TODO move this to media specific
+  max_line_number?: number; // Video TODO move this to media specific
   packet_count: number; // Total number of RTP packets
-  rate: number; // Video frame/field rate TODO move this to media specific
+  rate?: number; // Video frame/field rate TODO move this to media specific
 }
 
 export interface IStreamInfo {
   id: string; // Unique ID of the stream
   media_specific?: MediaSpecificInfo; // Not set if stream is unknown
   media_type: MediaType;
-  media_type_validation: IMediaTypeValidation;
+  media_type_validation?: IMediaTypeValidation;
   network_information: INetworkInformation;
   pcap: string; // The id of the pcap on which this stream is contained
   state: StreamState;
