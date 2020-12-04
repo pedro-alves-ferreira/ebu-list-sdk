@@ -8,6 +8,11 @@ const parser = yargs(process.argv.slice(2))
         '$0 login --url https://list.ebu.io --user demo --pass demo',
         'Get the version of the EBU hosted LIST instance.'
     )
+    .command('browse-analysis', 'Select pcap and display stream details.')
+    .example(
+        '$0 browse-analysis --url https://list.ebu.io --user demo --pass demo',
+        'Show all pcaps and let the use select one and display associated streams'
+    )
     .command('pcap-upload <pcap-file>', 'Upload a pcap file.')
     .example(
         '$0 pcap-upload ST2110.pcap --url https://list.ebu.io --user demo --pass demo',

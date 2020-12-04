@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { Transport } from './transport';
-import { IPcapUploadResult, PcapId } from './types';
+import { IPcapUploadResult, PcapId, IPcapInfo } from './types';
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -10,7 +10,9 @@ export class Pcap {
     }
 
     public async getAll() {
-        return this.transport.get(`/api/pcap`);
+        const response = await this.transport.get('/api/pcap');
+        const pcaps: IPcapInfo[] = response as IPcapInfo[];
+        return pcaps;
     }
 
     public async getInfo(pcapId: string) {
