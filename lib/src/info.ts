@@ -9,6 +9,8 @@ export class Info {
     }
 
     public async getVersion() {
-        const version: types.IVersion = (await this.transport.get('/api/meta/version')) as types.IVersion;
+        const response = await this.transport.get('/api/meta/version');
+        const version: types.IVersion = response as types.IVersion;
+        return version;
     }
 }

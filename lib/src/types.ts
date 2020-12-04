@@ -13,7 +13,12 @@ export interface IVersion {
 }
 
 export type PcapId = string;
+export type FileName = string;
 
 export interface IPcapUploadResult {
     uuid: PcapId;
+}
+
+export interface IPcapInfo {
+    file_name: FileName;
 }
