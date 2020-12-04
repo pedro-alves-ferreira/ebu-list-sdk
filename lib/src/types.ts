@@ -1,5 +1,3 @@
-import fs from 'fs';
-
 export interface IListOptions {
     baseUrl: string;
     username: string;
@@ -12,6 +10,7 @@ export interface IVersion {
     patch: number;
 }
 
+// analysis
 export type PcapId = string;
 export type FileName = string;
 
@@ -21,4 +20,19 @@ export interface IPcapUploadResult {
 
 export interface IPcapInfo {
     file_name: FileName;
+}
+
+// live
+export interface LiveMeta {
+    label: string;
+}
+
+export interface Sdp {
+    streams: string;
+}
+
+export interface ILiveSource {
+    id: string;
+    meta: LiveMeta;
+    sdp: Sdp;
 }

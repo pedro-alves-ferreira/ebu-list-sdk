@@ -19,7 +19,12 @@ export class Pcap {
         return this.transport.get(`/api/pcap/${pcapId}`);
     }
 
+    public async del(pcapId: string) {
+        return this.transport.del(`/api/pcap/${pcapId}`);
+    }
+
     public async getStreams(pcapId: string) {
+
         return this.transport.get(`/api/pcap/${pcapId}/streams/`);
     }
 
