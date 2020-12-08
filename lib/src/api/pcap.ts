@@ -1,3 +1,10 @@
+export interface IProblem {
+    stream_id: string | null; // If null, applies to the whole pcap, e.g. truncated
+    value: {
+        id: string; // Problem id
+    };
+}
+
 export interface IPcapInfo {
     analyzed: boolean; // True if the analysis is thoroughly complete
     analyzer_version: string; // The version of LIST when the analysis was done
@@ -15,7 +22,8 @@ export interface IPcapInfo {
     total_streams: number; // Total number of streams
     truncated: boolean; // True if the pcap does not contain the complete packet payload
     video_streams: number; // Number of video streams
-    wide_streams: 0; // ST2110-21
+    wide_streams: number; // ST2110-21
+    summary: { error_list: IProblem[]; warning_list: IProblem[] };
 }
 
 export type Rate = '24000/1001' | '24' | '25' | '30000/1001' | '30' | '50' | '60000/1001' | '60';
