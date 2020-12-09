@@ -163,6 +163,25 @@ export async function putForm(
     });
 }
 
+export async function del(baseUrl: string, authToken: string, endpoint: string) {
+    const headers: http.OutgoingHttpHeaders = {
+        Authorization: `Bearer ${authToken}`,
+    };
+
+    const options = {
+        headers,
+        method: 'DELETE',
+        rejectUnauthorized: false,
+    };
+
+    return new Promise((resolve, reject): void => {
+        const callback = (res: http.IncomingMessage): void => handleHttpResponse(res, resolve, reject);
+        const req: http.ClientRequest = makeRequest(`${baseUrl}${endpoint}`, options, callback);
+        req.on('error', reject);
+        req.end();
+    });
+}
+
 declare interface IResponseBase {
     result: number;
     success: boolean;

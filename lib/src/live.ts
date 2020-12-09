@@ -1,5 +1,6 @@
 import { Workflow } from './api/constants';
 import { Transport } from './transport';
+import { ILiveSource } from './types';
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -9,7 +10,9 @@ export class Live {
     }
 
     public async getAllSources() {
-        return this.transport.get('/api/live/sources');
+        const response = await this.transport.get('/api/live/sources');
+        const sources: ILiveSource[] = response as ILiveSource[];
+        return sources;
     }
 
     public async startCapture(filename: string, durationMs: number, sources: string[]) {

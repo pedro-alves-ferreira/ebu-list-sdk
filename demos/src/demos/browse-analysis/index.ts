@@ -35,5 +35,6 @@ export const run = async (args: IArgs) => {
     }
 
     console.log('exit');
+    rl.close();
     await list.close();
 };

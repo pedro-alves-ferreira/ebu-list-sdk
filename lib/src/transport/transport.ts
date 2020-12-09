@@ -22,4 +22,8 @@ export class Transport {
     public async putForm(endpoint: string, entries: IPutEntry[]): Promise<any> {
         return this.rest.putForm(endpoint, entries);
     }
+
+    public async del(endpoint: string) {
+        return this.rest.del(endpoint);
+    }
 }
