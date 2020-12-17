@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { Transport } from './transport';
-import { IPcapUploadResult, PcapId, IPcapInfo } from './types';
+import { IPcapUploadResult, PcapId, IPcapInfo, IStreamInfo } from './types';
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -24,8 +24,9 @@ export class Pcap {
     }
 
     public async getStreams(pcapId: string) {
-
-        return this.transport.get(`/api/pcap/${pcapId}/streams/`);
+        const response = await this.transport.get(`/api/pcap/${pcapId}/streams/`);
+        const streams: IStreamInfo[] = response as IStreamInfo[];
+        return streams;
     }
 
     // path: actual path to the file
