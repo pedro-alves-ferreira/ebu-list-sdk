@@ -13,6 +13,7 @@ export interface IVersion {
 // analysis
 export type PcapId = string;
 export type FileName = string;
+export type MediaType = string;
 
 export interface IPcapUploadResult {
     uuid: PcapId;
@@ -20,6 +21,10 @@ export interface IPcapUploadResult {
 
 export interface IPcapInfo {
     file_name: FileName;
+}
+
+export interface IStreamInfo {
+    media_type: MediaType;
 }
 
 // live
