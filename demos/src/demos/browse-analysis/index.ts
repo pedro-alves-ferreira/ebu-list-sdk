@@ -27,7 +27,7 @@ export const run = async (args: IArgs) => {
         console.log('0: quit');
 
         var index : number = await askForNumber('Choose a pcap number: ');
-        if (index < 0 || index > (streams.length + 1))
+        if (index < 0 || index > (pcaps.length + 1))
             continue;
         else if (index == 0)
             break;
