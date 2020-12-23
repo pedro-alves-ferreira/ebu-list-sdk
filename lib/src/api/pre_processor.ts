@@ -1,4 +1,4 @@
-import { mq } from '@bisect/bisect-core-ts';
+import { mq } from '@bisect/bisect-core-ts-be';
 import * as pcap from './pcap'
 
 export const preprocessorRequestQueue: mq.IQueueInfo = {

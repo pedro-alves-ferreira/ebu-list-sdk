@@ -33,6 +33,7 @@
     },
     "dependencies": {
         "@bisect/bisect-core-ts": "^0.0.0",
+        "@bisect/bisect-core-ts-be": "^0.0.0",
         "@types/form-data": "^2.5.0",
         "form-data": "^3.0.0",
         "http": "0.0.1-security",
