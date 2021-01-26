@@ -122,7 +122,7 @@ export class AuthClient {
 
         const revalidateTime =
             expireInMs > tokenRevalidateAdvanceMs ? expireInMs - tokenRevalidateAdvanceMs : expireInMs / 2;
-        console.log(`Token expires in ${expireInMs}ms. Setting the timer to fire in ${revalidateTime}ms`);
+        // console.log(`Token expires in ${expireInMs}ms. Setting the timer to fire in ${revalidateTime}ms`);
         this.resetTimer(revalidateTime);
     }
 
