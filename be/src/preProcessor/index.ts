@@ -1,14 +1,13 @@
-import { mq } from '@bisect/bisect-core-ts-be';
 import { types } from '@bisect/ebu-list-sdk';
 
-export const preprocessorRequestQueue: mq.IQueueInfo = {
+export const preprocessorRequestQueue = {
     name: 'ebu-list.preprocessor.request',
     options: {
         durable: true,
     },
 };
 
-export const preprocessorStatusExchange: mq.IExchangeInfo = {
+export const preprocessorStatusExchange = {
     name: 'ebu-list.preprocessor.status',
     type: 'fanout',
     options: { durable: false },

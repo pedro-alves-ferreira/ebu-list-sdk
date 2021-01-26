@@ -32,7 +32,6 @@
     },
     "dependencies": {
         "@bisect/bisect-core-ts": "^0.1.0",
-        "@bisect/bisect-core-ts-be": "^0.1.0",
         "@bisect/ebu-list-sdk": "^0.0.0",
         "@types/form-data": "^2.5.0",
         "form-data": "^3.0.0",
