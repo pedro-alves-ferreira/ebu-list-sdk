@@ -1,39 +1,77 @@
 import * as apiTypes from './api';
-import { login } from './auth';
+import { AuthClient, ILoginData, IApiHandler, ILocalStorageHandler, IGenericResponse, ILoginResponse } from './auth';
 import { Info } from './info';
 import { Live } from './live';
 import { Pcap } from './pcap';
 import { Transport } from './transport';
+import { get, post } from './transport/common';
 import { RestClient } from './transport/restClient';
 import { WSCLient } from './transport/wsClient';
 import * as types from './types';
+import { Unwinder } from '@bisect/bisect-core-ts';
 
 //////////////////////////////////////////////////////////////////////////////
 
+const makeApiHandler = (baseUrl: string): IApiHandler => ({
+    login: async (data: ILoginData): Promise<IGenericResponse<ILoginResponse>> =>
+        post(baseUrl, null, '/auth/login', data),
+    revalidateToken: async (token: string) => get(baseUrl, token, '/api/user/revalidate-token'),
+});
+
+class TokenStorage implements ILocalStorageHandler {
+    public token: any | undefined = undefined;
+
+    public setItem(key: string, value: any) {
+        this.token = value;
+    }
+    public getItem(key: string) {
+        return this.token;
+    }
+    public removeItem(key: string) {
+        this.token = undefined;
+    }
+}
+
 export class LIST {
-    // returns a new LIST object
-    public static async connectWithOptions(options: types.IListOptions): Promise<LIST> {
-        const token = await login(options);
+    private readonly transport: Transport;
+    private readonly authClient: AuthClient;
+    private readonly rest: RestClient;
+    private ws: WSCLient | null = null;
 
-        const rest = new RestClient(options.baseUrl, token);
-        const user: apiTypes.user.IUserInfo = await rest.get('/api/user') as apiTypes.user.IUserInfo;
-        const ws = new WSCLient(options.baseUrl, '/socket', user.id);
-        const transport = new Transport(rest, ws);
+    public constructor(private readonly baseUrl: string) {
+        const unwinder = new Unwinder();
 
-        return new LIST(transport);
+        try {
+            const apiHandler = makeApiHandler(baseUrl);
+            const storage = new TokenStorage();
+            this.authClient = new AuthClient(apiHandler, storage);
+            unwinder.add(() => this.authClient.close());
+
+            this.rest = new RestClient(baseUrl, this.authClient.getToken.bind(this.authClient));
+            this.transport = new Transport(this.rest);
+
+            unwinder.reset();
+        } finally {
+            unwinder.unwind();
+        }
     }
 
-    public static async connect(baseUrl: string, username: string, password: string): Promise<LIST> {
-        return LIST.connectWithOptions({ baseUrl, username, password });
-    }
+    public async login(username: string, password: string): Promise<void> {
+        const loginError = await this.authClient.login(username, password);
+        if (loginError) {
+            throw loginError;
+        }
 
-    private constructor(public readonly transport: Transport) {
-        this.transport = transport;
+        const user: apiTypes.user.IUserInfo = (await this.rest.get('/api/user')) as apiTypes.user.IUserInfo;
+        this.ws = new WSCLient(this.baseUrl, '/socket', user.id);
     }
 
     public async close(): Promise<void> {
-        await this.transport.post('/auth/logout', {});
-        this.transport.close();
+        if (this.ws) {
+            this.ws.close();
+        }
+        
+        this.authClient.close();
     }
 
     public get info() {
@@ -46,5 +84,9 @@ export class LIST {
 
     public get pcap() {
         return new Pcap(this.transport);
+    }
+
+    public async logout(): Promise<void> {
+        return this.transport.post('/auth/logout', {});
     }
 }

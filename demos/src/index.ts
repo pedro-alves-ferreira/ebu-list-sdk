@@ -34,9 +34,7 @@ const parser = yargs(process.argv.slice(2))
     .wrap(yargs.terminalWidth())
     .epilog('© 2020 Bisect Lda');
 
-const argv: IArgs = parser.argv;
-
-const command = argv._ && argv._.length > 0 ? argv._[0] : undefined;
+const command = parser.argv._ && parser.argv._.length > 0 ? parser.argv._[0] : undefined;
 
 if (command === undefined) {
     process.stderr.write('No command was specified.');
@@ -48,8 +46,12 @@ if (command === undefined) {
     () => void
 */
 const run = async () => {
-    const d = await import(`./demos/${command}`);
-    d.run(argv);
+    try {
+        const d = await import(`./demos/${command}`);
+        await d.run(parser.argv);
+    } catch (e) {
+        console.log(`Error: ${JSON.stringify(e)}`);
+    }
 };
 
 run().catch(e => {

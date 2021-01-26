@@ -1,5 +1,5 @@
 import { mq } from '@bisect/bisect-core-ts-be';
-import * as pcap from './pcap'
+import { types } from '@bisect/ebu-list-sdk';
 
 export const preprocessorRequestQueue: mq.IQueueInfo = {
     name: 'ebu-list.preprocessor.request',
@@ -31,8 +31,8 @@ export enum Status {
 }
 
 export interface IStatusMessageData {
-    pcap: pcap.IPcapInfo;
-    streams: pcap.IStreamInfo[];
+    pcap: types.IPcapInfo;
+    streams: types.IStreamInfo[];
 }
 
 export interface IStatusMessage {

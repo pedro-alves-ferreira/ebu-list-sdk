@@ -1,10 +1,11 @@
 import FormData from 'form-data';
-import fs from 'fs';
 import http from 'http';
 import https from 'https';
 import { StringDecoder } from 'string_decoder';
 
 //////////////////////////////////////////////////////////////////////////////
+
+export type TokenGetter = () => string;
 
 export interface ITransportError extends Error {
     readonly code: number;
@@ -101,7 +102,7 @@ export async function post(baseUrl: string, authToken: string | null, endpoint: 
     });
 }
 
-export async function get(baseUrl: string, authToken: string, endpoint: string) {
+export async function get(baseUrl: string, authToken: string, endpoint: string): Promise<any> {
     const headers: http.OutgoingHttpHeaders = {
         Authorization: `Bearer ${authToken}`,
     };
@@ -122,7 +123,7 @@ export async function get(baseUrl: string, authToken: string, endpoint: string) 
 
 export interface IPutEntry {
     name: string;
-    value: string | fs.ReadStream;
+    value: string | any; // fs.ReadStream;
 }
 
 export async function putForm(

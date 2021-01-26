@@ -1,4 +1,3 @@
-import fs from 'fs';
 import { Transport } from './transport';
 import { IPcapUploadResult, PcapId, IPcapInfo, IStreamInfo } from './types';
 
@@ -29,24 +28,13 @@ export class Pcap {
         return streams;
     }
 
-    // path: actual path to the file
     // name: the name that will show up on LIST
-    public async upload(name: string, path: string): Promise<IPcapUploadResult> {
+    // stream: e.g. fs.createReadStream(path)
+    public async upload(name: string, stream: any): Promise<IPcapUploadResult> {
         const result = await this.transport.putForm('/api/pcap', [
-            { name: 'pcap', value: fs.createReadStream(path) },
+            { name: 'pcap', value: stream },
             { name: 'originalFilename', value: name },
         ]);
         return result as IPcapUploadResult;
     }
-
-    // public makeAnalysisAwaiter(pcapId: PcapId, timeoutMs: number): Promise<any> {
-    //     console.log('makeAnalysisAwaiter');
-    //     return this.transport.ws.makeAwaiter<object>(
-    //         'batatas',
-    //         (data: any) => {
-    //             return false;
-    //         },
-    //         timeoutMs
-    //     );
-    // }
 }

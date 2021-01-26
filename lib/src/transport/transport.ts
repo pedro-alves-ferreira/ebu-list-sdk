@@ -1,15 +1,8 @@
 import { IPutEntry } from './common';
 import { RestClient } from './restClient';
-import { WSCLient } from './wsClient';
 
 export class Transport {
-    public constructor(public readonly rest: RestClient, public readonly ws: WSCLient) 
-    {
-    }
-
-    public close(): void {
-        this.ws.close();
-    }
+    public constructor(public readonly rest: RestClient) {}
 
     public async get(endpoint: string) {
         return this.rest.get(endpoint);

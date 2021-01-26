@@ -16,7 +16,8 @@ const askForNumber = function (question: string): Promise<number> {
 }
 
 export const run = async (args: IArgs) => {
-    const list = await LIST.connectWithOptions(args);
+    const list = new LIST(args.baseUrl);
+    await list.login(args.username, args.password);
     const pcaps = await list.pcap.getAll();
 
     while (true) {

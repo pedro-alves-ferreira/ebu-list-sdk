@@ -30,7 +30,8 @@ const sleep = async (ms: number) => {
 };
 
 export const run = async (args: IArgs) => {
-    const list = await LIST.connectWithOptions(args);
+    const list = new LIST(args.baseUrl);
+    await list.login(args.username, args.password);
 
     console.log('---------------------------------');
     console.log('Get live source');
