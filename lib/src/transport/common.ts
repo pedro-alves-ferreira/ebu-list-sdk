@@ -3,6 +3,23 @@ import http from 'http';
 import https from 'https';
 import { StringDecoder } from 'string_decoder';
 
+// Declared here so that we can use both Node.js's and browser's version
+declare class URL {
+    constructor(u: string);
+
+    auth: string | null;
+    hash: string | null;
+    host: string | null;
+    hostname: string | null;
+    href: string;
+    path: string | null;
+    pathname: string | null;
+    protocol: string | null;
+    search: string | null;
+    slashes: boolean | null;
+    port: string | null;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 
 export type TokenGetter = () => string;
@@ -38,11 +55,16 @@ const makeRequest = (
     options: http.RequestOptions,
     callback: (res: http.IncomingMessage) => void
 ): http.ClientRequest => {
-    if (u.startsWith('https')) {
-        return https.request(u, options, callback);
+    const url = new URL(u);
+    options.protocol = url.protocol;
+    options.hostname = url.hostname;
+    options.port = url.port;
+    options.path = url.pathname;
+    if (options.protocol === 'https:') {
+        return https.request(options, callback);
     }
 
-    return http.request(u, options, callback);
+    return http.request(options, callback);
 };
 
 const checkStatusCode = (code: number | undefined): boolean => {
@@ -58,7 +80,7 @@ const handleHttpResponse = (res: http.IncomingMessage, resolve: resolver, reject
         reject(new TransportError(res));
     }
 
-    let body: string = '';
+    let body = '';
     const decoder: StringDecoder = new StringDecoder('utf8');
     res.on('data', (data: Buffer) => (body += decoder.write(data)));
     res.on('end', () => {
@@ -135,7 +157,7 @@ export async function putForm(
     return new Promise((resolve, reject): void => {
         const form = new FormData();
 
-        entries.forEach((entry) => form.append(entry.name, entry.value));
+        entries.forEach(entry => form.append(entry.name, entry.value));
 
         const headers: http.OutgoingHttpHeaders = {
             ...form.getHeaders(),
@@ -154,13 +176,11 @@ export async function putForm(
         const callback = (res: http.IncomingMessage): void => handleHttpResponse(res, resolve, reject);
         const req: http.ClientRequest = makeRequest(`${baseUrl}${endpoint}`, options, callback);
         form.pipe(req);
-        req.on('error', (err) => {
+        req.on('error', err => {
             console.error(`req.on('error') ${JSON.stringify(err)}`);
             reject(err);
         });
-        req.on('response', (res) => {
-            handleHttpResponse(res, resolve, reject);
-        });
+        req.on('response', res => handleHttpResponse(res, resolve, reject));
     });
 }
 

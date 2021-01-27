@@ -8,7 +8,7 @@
         "**/*"
     ],
     "scripts": {
-        "build": "npm run clean && npm run compile",
+        "build": "yarn run clean && yarn run compile",
         "clean": "rm -rf ./dist",
         "compile": "tsc"
     },
@@ -37,6 +37,6 @@
         "form-data": "^3.0.0",
         "http": "0.0.1-security",
         "https": "^1.0.0",
-        "socket.io": "^2.3.0"
+        "socket.io": "^2.4.0"
     }
 }

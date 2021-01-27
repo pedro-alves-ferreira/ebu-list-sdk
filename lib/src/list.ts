@@ -1,3 +1,4 @@
+import { Unwinder } from '@bisect/bisect-core-ts';
 import * as apiTypes from './api';
 import { AuthClient, ILoginData, IApiHandler, ILocalStorageHandler, IGenericResponse, ILoginResponse } from './auth';
 import { Info } from './info';
@@ -7,35 +8,24 @@ import { Transport } from './transport';
 import { get, post } from './transport/common';
 import { RestClient } from './transport/restClient';
 import { WSCLient } from './transport/wsClient';
-import * as types from './types';
-import { Unwinder } from '@bisect/bisect-core-ts';
+import TokenStorage from './tokenStorage';
 
-//////////////////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////////
 
 const makeApiHandler = (baseUrl: string): IApiHandler => ({
     login: async (data: ILoginData): Promise<IGenericResponse<ILoginResponse>> =>
         post(baseUrl, null, '/auth/login', data),
-    revalidateToken: async (token: string) => get(baseUrl, token, '/api/user/revalidate-token'),
+    revalidateToken: async (token: string): Promise<IGenericResponse<ILoginResponse>> =>
+        get(baseUrl, token, '/api/user/revalidate-token'),
 });
 
-class TokenStorage implements ILocalStorageHandler {
-    public token: any | undefined = undefined;
-
-    public setItem(key: string, value: any) {
-        this.token = value;
-    }
-    public getItem(key: string) {
-        return this.token;
-    }
-    public removeItem(key: string) {
-        this.token = undefined;
-    }
-}
-
-export class LIST {
+export default class LIST {
     private readonly transport: Transport;
+
     private readonly authClient: AuthClient;
+
     private readonly rest: RestClient;
+
     private ws: WSCLient | null = null;
 
     public constructor(private readonly baseUrl: string) {
@@ -70,7 +60,7 @@ export class LIST {
         if (this.ws) {
             this.ws.close();
         }
-        
+
         this.authClient.close();
     }
 
