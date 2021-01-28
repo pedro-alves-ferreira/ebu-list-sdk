@@ -1,9 +1,16 @@
 import SocketIOClient from 'socket.io-client';
-import { logger } from '../logger';
+import logger from '../utils/logger';
 
-//////////////////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////////
 
-export class WSCLient {
+function handleWsError(error: any): void {
+    logger.error(`WebSocket error: ${error}`);
+}
+
+function handleWsConnectError(error: any): void {
+    logger.error(`WebSocket connection error: ${error}`);
+}
+export default class WSCLient {
     public readonly client: SocketIOClient.Socket;
 
     public constructor(url: string, path: string, userId: string) {
@@ -17,72 +24,18 @@ export class WSCLient {
             rejectUnauthorized: false,
             transports: ['websocket', 'polling'],
         });
-    
+
         this.client.on('connect', () => {
             this.client.emit('register', userId);
         });
-    
-        this.client.on('error', this.handleWsError);
-        this.client.on('connect_error', this.handleWsConnectError);
+
+        this.client.on('error', handleWsError);
+        this.client.on('connect_error', handleWsConnectError);
     }
 
     public close(): void {
-        this.client.off('error', this.handleWsError);
-        this.client.off('connect_error', this.handleWsConnectError);
+        this.client.off('error', handleWsError);
+        this.client.off('connect_error', handleWsConnectError);
         this.client.close();
     }
-
-    // // Returns a promise which resolves to:
-    // // - the event, if succeeded
-    // // - undefined, if timeout
-    // public makeAwaiter<TResponse>(
-    //     eventName: string,
-    //     condition: (data: any) => TResponse | false,
-    //     timeoutMs: number
-    // ): Promise<TResponse | undefined> {
-    //     return makeAwaiter(this.client, eventName, condition, timeoutMs);
-    // }
-
-    private handleWsError(error: any): void {
-        logger.error(`WebSocket error: ${error}`);
-    }
-
-    private handleWsConnectError(error: any): void {
-        logger.error(`WebSocket connection error: ${error}`);
-    }
 }
-
-// // Returns a promise which resolves to:
-// // - the value returned by condition, if succeeded
-// // - undefined, if timeout
-// // condition should return a truthy value to indicate that the event is accepted.
-// export function makeAwaiter<TResponse>(
-//     ws: SocketIOClient.Socket,
-//     eventName: string,
-//     condition: (data: any) => TResponse | false,
-//     timeoutMs: number
-// ): Promise<TResponse | undefined> {
-//     return new Promise((resolve, reject) => {
-//         const timer = setTimeout(() => {
-//             ws.off('message', callback);
-//             console.error('awaiter timed out');
-//             resolve(undefined);
-//         }, timeoutMs);
-
-//         const callback = (msg: IWSMessage) => {
-//             //process.stdout.write(`event: ${JSON.stringify(msg)}\n`);
-//             return undefined;
-//             // if (msg.event !== eventName) {
-//             //     return;
-//             // }
-//             // const result = condition(msg.data);
-//             // if (result) {
-//             //     clearTimeout(timer);
-//             //     ws.off('message', callback);
-//             //     resolve(result);
-//             // }
-//         };
-
-//         ws.on('message', callback);
-//     });
-// }

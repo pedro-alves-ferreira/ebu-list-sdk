@@ -1,8 +1,7 @@
-export interface IListOptions {
-    baseUrl: string;
-    username: string;
-    password: string;
-}
+import * as api from './api';
+
+export type IPcapInfo = api.pcap.IPcapInfo;
+export type IStreamInfo = api.pcap.IStreamInfo;
 
 export interface IVersion {
     major: number;
@@ -19,25 +18,17 @@ export interface IPcapUploadResult {
     uuid: PcapId;
 }
 
-export interface IPcapInfo {
-    file_name: FileName;
-}
-
-export interface IStreamInfo {
-    media_type: MediaType;
-}
-
 // live
-export interface LiveMeta {
+export interface ILiveMeta {
     label: string;
 }
 
-export interface Sdp {
+export interface ISdp {
     streams: string;
 }
 
 export interface ILiveSource {
     id: string;
-    meta: LiveMeta;
-    sdp: Sdp;
+    meta: ILiveMeta;
+    sdp: ISdp;
 }

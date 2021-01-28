@@ -2,25 +2,10 @@ import FormData from 'form-data';
 import http from 'http';
 import https from 'https';
 import { StringDecoder } from 'string_decoder';
+import logger from '../utils/logger';
+import { createUrl } from '../utils/platform';
 
-// Declared here so that we can use both Node.js's and browser's version
-declare class URL {
-    constructor(u: string);
-
-    auth: string | null;
-    hash: string | null;
-    host: string | null;
-    hostname: string | null;
-    href: string;
-    path: string | null;
-    pathname: string | null;
-    protocol: string | null;
-    search: string | null;
-    slashes: boolean | null;
-    port: string | null;
-}
-
-//////////////////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////////
 
 export type TokenGetter = () => string;
 
@@ -30,7 +15,9 @@ export interface ITransportError extends Error {
 
 export class TransportError implements ITransportError {
     public readonly code: number;
+
     public readonly message: string;
+
     public readonly name = 'TransportError';
 
     public constructor(res: http.IncomingMessage) {
@@ -55,16 +42,19 @@ const makeRequest = (
     options: http.RequestOptions,
     callback: (res: http.IncomingMessage) => void
 ): http.ClientRequest => {
-    const url = new URL(u);
-    options.protocol = url.protocol;
-    options.hostname = url.hostname;
-    options.port = url.port;
-    options.path = url.pathname;
-    if (options.protocol === 'https:') {
-        return https.request(options, callback);
+    const url = createUrl(u);
+
+    const o = { ...options };
+    o.protocol = url.protocol;
+    o.hostname = url.hostname;
+    o.port = url.port;
+    o.path = url.pathname;
+
+    if (o.protocol === 'https:') {
+        return https.request(o, callback);
     }
 
-    return http.request(options, callback);
+    return http.request(o, callback);
 };
 
 const checkStatusCode = (code: number | undefined): boolean => {
@@ -82,7 +72,9 @@ const handleHttpResponse = (res: http.IncomingMessage, resolve: resolver, reject
 
     let body = '';
     const decoder: StringDecoder = new StringDecoder('utf8');
-    res.on('data', (data: Buffer) => (body += decoder.write(data)));
+    res.on('data', (data: Buffer) => {
+        body += decoder.write(data);
+    });
     res.on('end', () => {
         if (body === '') {
             resolve({});
@@ -177,14 +169,14 @@ export async function putForm(
         const req: http.ClientRequest = makeRequest(`${baseUrl}${endpoint}`, options, callback);
         form.pipe(req);
         req.on('error', err => {
-            console.error(`req.on('error') ${JSON.stringify(err)}`);
+            logger.error(`req.on('error') ${JSON.stringify(err)}`);
             reject(err);
         });
         req.on('response', res => handleHttpResponse(res, resolve, reject));
     });
 }
 
-export async function del(baseUrl: string, authToken: string, endpoint: string) {
+export async function del(baseUrl: string, authToken: string, endpoint: string): Promise<void> {
     const headers: http.OutgoingHttpHeaders = {
         Authorization: `Bearer ${authToken}`,
     };
@@ -212,7 +204,7 @@ function isResponse(object: any): object is IResponseBase {
     return 'result' in object || 'success' in object;
 }
 
-export const validateResponseCode = (res: any) => {
+export const validateResponseCode = (res: any): void => {
     if (!res) {
         throw new Error(`Failed: ${JSON.stringify(res)}`);
     }

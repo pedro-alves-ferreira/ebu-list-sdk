@@ -1,13 +1,13 @@
 import { Unwinder } from '@bisect/bisect-core-ts';
 import * as apiTypes from './api';
-import { AuthClient, ILoginData, IApiHandler, ILocalStorageHandler, IGenericResponse, ILoginResponse } from './auth';
+import { AuthClient, ILoginData, IApiHandler, IGenericResponse, ILoginResponse } from './auth';
 import { Info } from './info';
 import { Live } from './live';
-import { Pcap } from './pcap';
+import Pcap from './pcap';
 import { Transport } from './transport';
 import { get, post } from './transport/common';
 import { RestClient } from './transport/restClient';
-import { WSCLient } from './transport/wsClient';
+import WSCLient from './transport/wsClient';
 import TokenStorage from './tokenStorage';
 
 // ////////////////////////////////////////////////////////////////////////////
@@ -72,7 +72,7 @@ export default class LIST {
         return new Live(this.transport);
     }
 
-    public get pcap() {
+    public get pcap(): Pcap {
         return new Pcap(this.transport);
     }
 
