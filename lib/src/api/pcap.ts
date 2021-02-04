@@ -75,7 +75,7 @@ export interface IST2110AncInfo {
     packets_per_frame: number;
     rate: Rate;
     scan_type: ScanType;
-    sub_streams: IST2110Substream[];
+    sub_streams?: IST2110Substream[];
 }
 
 export type MediaSpecificInfo = IST2110VideoInfo | IST2110AudioInfo | IST2110AncInfo;
